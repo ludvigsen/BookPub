@@ -1,4 +1,3 @@
-// Specifically request an abstraction for MetaCoin
 var Book = artifacts.require('Book');
 
 contract('Book', function(accounts) {
@@ -9,7 +8,7 @@ contract('Book', function(accounts) {
     })
       .then(inst => {
         instance = inst;
-        return instance.buyCoin({from: accounts[0], value: 100});
+        return instance.buyCoin({ from: accounts[0], value: 100 });
       })
       .then(() => {
         return instance.getFirstInLine();
@@ -30,10 +29,10 @@ contract('Book', function(accounts) {
     })
       .then(inst => {
         instance = inst;
-        return instance.buyCoin({from: accounts[0], value: 100});
+        return instance.buyCoin({ from: accounts[0], value: 100 });
       })
       .then(() => {
-        return instance.buyCoin({from: accounts[1], value: 100});
+        return instance.buyCoin({ from: accounts[1], value: 100 });
       })
       .then(() => {
         return instance.getFirstInLine();
@@ -54,16 +53,16 @@ contract('Book', function(accounts) {
     })
       .then(inst => {
         instance = inst;
-        return instance.buyCoin({from: accounts[0], value: 100});
+        return instance.buyCoin({ from: accounts[0], value: 100 });
       })
       .then(() => {
-        return instance.buyCoin({from: accounts[1], value: 99});
+        return instance.buyCoin({ from: accounts[1], value: 99 });
       })
       .then(() => {
-        return instance.buyCoin({from: accounts[1], value: 1});
+        return instance.buyCoin({ from: accounts[1], value: 1 });
       })
       .then(() => {
-        return instance.buyCoin({from: accounts[2], value: 99});
+        return instance.buyCoin({ from: accounts[2], value: 99 });
       })
       .then(() => {
         return instance.getFirstInLine();
@@ -84,43 +83,56 @@ contract('Book', function(accounts) {
     })
       .then(inst => {
         instance = inst;
-        return instance.buyCoin({from: accounts[0], value: 100}); // [account0]
+        console.log('TEST1');
+        return instance.buyCoin({ from: accounts[0], value: 100 }); // [account0]
       })
       .then(() => {
-        return instance.buyCoin({from: accounts[3], value: 99}); // [account0] [account1]
+        console.log('TEST2');
+        return instance.buyCoin({ from: accounts[3], value: 99 }); // [account0] [account3]
       })
       .then(() => {
-        return instance.buyCoin({from: accounts[1], value: 99}); // [account0] [account1]
+        console.log('TEST3');
+        return instance.buyCoin({ from: accounts[1], value: 99 }); // [account0] [account3, account1]
       })
       .then(() => {
-        return instance.buyCoin({from: accounts[1], value: 1}); // [account1, account0]
+        console.log('TEST4');
+        return instance.buyCoin({ from: accounts[4], value: 1 }); // [account4] [account0] [account3, account1]
       })
       .then(() => {
-        return instance.buyCoin({from: accounts[2], value: 50}); // [account1, account0] [acount2]
+        console.log('TEST5');
+        return instance.buyCoin({ from: accounts[2], value: 50 }); // [account0]  [account3, account1] [account2] [account4]
       })
       .then(() => {
+        console.log('TEST6');
         return instance.getFirstInLine();
       })
       .then(first => {
+        console.log('TEST7');
         assert.equal(accounts[0], first, 'Account 0 should be first in line');
       })
       .then(() => {
-        return instance.setFirstEligible({from: accounts[0]});
+        console.log('TEST8');
+        return instance.setFirstEligible({ from: accounts[0] });
       })
       .then(() => {
+        console.log('TEST9');
         return instance.getFirstInLine();
       })
       .then(first => {
-        assert.equal(accounts[1], first, 'Account 1 should be first in line');
-      })
-      .then(() => {
-        return instance.setFirstEligible({from: accounts[0]});
-      })
-      .then(() => {
-        return instance.getFirstInLine();
-      })
-      .then(first => {
+        console.log('TEST10');
         assert.equal(accounts[3], first, 'Account 3 should be first in line');
+      })
+      .then(() => {
+        console.log('TEST11');
+        return instance.setFirstEligible({ from: accounts[0] });
+      })
+      .then(() => {
+        console.log('TEST12');
+        return instance.getFirstInLine();
+      })
+      .then(first => {
+        console.log('TEST13');
+        assert.equal(accounts[1], first, 'Account 1 should be first in line');
       });
   });
 
@@ -131,10 +143,10 @@ contract('Book', function(accounts) {
     })
       .then(inst => {
         instance = inst;
-        return instance.buyCoin({from: accounts[0], value: 100}); // [account0]
+        return instance.buyCoin({ from: accounts[0], value: 100 }); // [account0]
       })
       .then(() => {
-        return instance.setFirstEligible({from: accounts[0]});
+        return instance.setFirstEligible({ from: accounts[0] });
       })
       .then(() => {
         return instance.getFirstInLine();
@@ -143,7 +155,7 @@ contract('Book', function(accounts) {
         assert.equal(accounts[3], first, 'Account 3 should be first in line');
       })
       .then(() => {
-        return instance.setFirstEligible({from: accounts[0]});
+        return instance.setFirstEligible({ from: accounts[0] });
       })
       .then(() => {
         assert.equal(true, false, 'We should be throwing an error');

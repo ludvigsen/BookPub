@@ -26,7 +26,7 @@ library BookQueueLib {
     returns (BookQueue)
   {
     return BookQueue({
-      bucketIndex: GroveLib.Index(sha3(this, block.number)),
+      bucketIndex: GroveLib.Index(keccak256(this, block.number)),
           highestBucketID: 0
           });
   }

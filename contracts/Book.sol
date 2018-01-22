@@ -18,7 +18,6 @@ contract Book is HumanStandardToken {
   function Book
     (
      address _authorAddress,
-     bytes metadata,
      uint _readershipStake,
      uint _goal,
      uint _toBeShipped,

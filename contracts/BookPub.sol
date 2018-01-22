@@ -16,73 +16,53 @@
 8) Coin holders are legally entitled to licesnsing revenue if a deal is made with a publisher, movie studio, amusementpark, etc.
 */
 
-/*MAY NOT COMPILE*/
-
 pragma solidity ^0.4.15;
 
 import "./Stoppable.sol";
+import './Book.sol';
 
 contract BookPub is Stoppable {
-    uint bookID;            //ID applied to book upon pub, incrementing after each new book
+  uint bookID;            //ID applied to book upon pub, incrementing after each new book
 
-    function BookPub(address bookAuthor){
-        bookID = 0;
-      }
-    modifier isOwner() {
-      require(msg.sender == owner);
-      _;}           //Owner of BookPub Platform
-    modifier isAuthor() {
-      //  require(authors[msg.sender].totalEarned == 0);
-      _;}                                          //Author exists in Author mapping
-    modifier isReader() {
-      //    require(readers[msg.sender].readerUsername);
-      _;}                                          //Reader exists in Reader mapping
+  mapping(address => BookStruct[]) bookMap;
+  BookStruct[] public books;
 
-    mapping(address => Reader) readers;
-    mapping(address => Author) authors;
-    mapping(uint => Book) books;
+  struct BookStruct {
+    uint bookID;                 //Global book ID ++1
+    address publishedAddress;
+    address authorAddress;       //Who was the author? Can be used to access Authors mapping
+    uint readershipStake;         //How much equity did the author provision for readers?
+  }
 
-    //Reader details [readersUsername, bookIDs purchased array]
-    struct Reader {
-      bytes readerUsername;      //Reader's username
-      bool eligible;
-      //uint[] booksPurchased;       //BookIDs of all owned books
-      }
-    //Author details [authorName, totalEarned, bookID published array]
-    struct Author {
-       bytes authorName;          //Author's legal name
-       uint totalEarned;            //How much has this writer earned?
-       //uint[] booksPublished;       //BookIDs of all published books
-      }
-    //Book details [bookID, authorAddress, readershipStake, readers array]
-    struct Book {
-      uint bookID;                 //Global book ID ++1
-      address authorAddress;       //Who was the author? Can be used to access Authors mapping
-      uint readershipStake;         //How much equity did the author provision for readers?
-      }
+  function publishBook
+    (
+     uint _readershipStake,
+     uint _goal,
+     uint _toBeShipped,
+     uint _userCount,
+     uint _eligibleCount,
+     uint _initialAmount,
+     string _tokenName,
+     uint8 _decimalUnits,
+     string _tokenSymbol
+    )
+    returns (address bookAddress)
+  {
+    bookID += 1;
 
-    function becomeReader(bytes _readerUsername) {
-      //Reader signs up to buy book coins
-      readers[msg.sender] = Reader({
-                                  readerUsername: _readerUsername,
-                                  eligible: false
-                                  });
-                                }
-    function becomeAuthor(bytes _authorName) {
-      //Author signs up to publish
-      authors[msg.sender] = Author({
-                                  authorName: _authorName,
-                                  totalEarned: 0
-                                  });
-                                }
-    function publishBook (uint _readershipStake)
-      isAuthor() {
-        bookID += 1;
-        books[bookID] = Book({
-                            bookID: bookID,
-                            authorAddress: msg.sender,
-                            readershipStake: _readershipStake
-                            });
-                          }
+    Book newBook = new Book(msg.sender, _readershipStake, _goal, _toBeShipped, _userCount,
+                            _eligibleCount, _initialAmount, _tokenName, _decimalUnits, _tokenSymbol);
+
+    BookStruct memory book = BookStruct({
+      bookID: bookID,
+      publishedAddress: newBook,
+      authorAddress: msg.sender,
+      readershipStake: _readershipStake
+    });
+
+    bookMap[msg.sender].push(book);
+    books.push(book);
+    return newBook;
+  }
 
 }
